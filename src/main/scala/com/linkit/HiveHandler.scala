@@ -3,7 +3,7 @@ package com.linkit
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 
-class HiveHandle extends SharedSparkSession {
+class HiveHandler extends SharedSparkSession {
 
   def saveDF(df:DataFrame, dbname:String, tablename:String, destPath: String): Unit ={
 
