@@ -8,8 +8,9 @@ avoiding to use any Big Data distributions just to save RAM memory, but for this
 I decided using the HortonWorks Sandbox due to my familiarity with that and I didn't have Hive installed.  
 
 - First issue was found on HDP 3.x sandbox. For that does not make me waste time, I changed that to HDP 2.6.5
-- Fist job running: There wasn't resource allocated to default queue on capacity scheduler, I changed it to 50% / 100%
-- Few memory and resource on my machine was a problem too, so I had to kill some yarn (yarn application -kill app...) process to get free resources.
+- Fist job running: There wasn't resource allocated to default queue on capacity scheduler, so I changed that to 50% / 100% and got able to run the job.
+- Few memory and resource on my machine (Macbook pro i7 16GB) was a problem too, so I had to kill some yarn (yarn application -kill app...) 
+process to get free resources, since I could not reserving more RAM to VirtualBox.
 
 
 ## HDFS & Hive on Spark
@@ -21,12 +22,26 @@ The solution of this part is quite simple and have few steps:
 <br>    2) List files into directory and create a Map of DataFrames
 <br>    3) Rename columns to replace dash sign (-) to underscore (_) 
         symbol (** Hive doesn't support dash in column name). 
- <br>   4) After the DF is prepared, the method createORCTableForEachCSV will create a External Table (if not exist) 
- and save the as ORC file into the destination path
+ <br>   4) After the DF is prepared, the method `createORCTableForEachCSV` will create a External Table (if not exist) 
+ and save the files as ORC into the destination path
  
  After the tables are already created,  the method getTable will return the DataFrame 
  required by parameter, in this case, drivers and timesheet.
    
-<br> The Drivers and Timesheet dataframes are joind and the columns Hours_logged and Miles_logged are summed, 
+<br> The Drivers and Timesheet dataframes are joind and the columns Hours_logged and Miles_logged are summed.
+
+<br> 
+```scala
+        
+    //Joing table
+    val driversTime = drivers.as("dr").join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
+      .select($"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+
+    //The amount of logged hours and logged miles per user
+    driversTime.groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+        .agg(sum("ts.hours_logged").as("hours_logged"), sum("ts.miles_logged").as("miles_logged"))
+      .show()
+      
+``` 
  
 
