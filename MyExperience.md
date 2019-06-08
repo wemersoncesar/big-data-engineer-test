@@ -31,17 +31,16 @@ The solution of this part is quite simple and have few steps:
 <br> The Drivers and Timesheet dataframes are joind and the columns Hours_logged and Miles_logged are summed.
 
 <br> 
-```scala
-        
-    //Joing table
+```
+
+    //Join DFs
     val driversTime = drivers.as("dr").join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
-      .select($"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+    .select($"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+    
+    //The sum of hours_logged and miles_logged
+     driversTime.groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+            .agg(sum("ts.hours_logged").as("hours_logged"), sum("ts.miles_logged").as("miles_logged"))
+            .show()
 
-    //The amount of logged hours and logged miles per user
-    driversTime.groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
-        .agg(sum("ts.hours_logged").as("hours_logged"), sum("ts.miles_logged").as("miles_logged"))
-      .show()
-      
-``` 
- 
 
+ <br>
