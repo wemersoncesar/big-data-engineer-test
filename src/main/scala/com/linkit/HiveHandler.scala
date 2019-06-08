@@ -15,9 +15,10 @@ class HiveHandler extends SharedSparkSession {
     * @param df - dataframe loaded from a csv file
     * @param dbname - name of database
     * @param tablename - table name
-    * @param destPath -
+    * @param destPath - warehouse database folder
+    * @param hiveExternalTable - option to create Hive managed table
     */
-  def createORCTableForEachCSV(df:DataFrame, dbname:String, tablename:String, destPath: String): Unit ={
+  def createORCHiveTableForEachCSV(df:DataFrame, dbname:String, tablename:String, destPath: String, hiveExternalTable:Boolean): Unit ={
 
     val formattedDf = removeHyphen(df)
     val fullDestPath = destPath.concat(dbname).concat("/").concat(tablename)
@@ -33,8 +34,13 @@ class HiveHandler extends SharedSparkSession {
 
     if(!sparkSession.catalog.tableExists(s"${dbname}.${tablename}")){
       //creating hive table
-      val query = s"CREATE EXTERNAL TABLE IF NOT EXISTS  ${dbname}.${tablename} (${fieldsStr} ) " +
-        s"STORED AS ORC  LOCATION '${fullDestPath}'"
+      var query =""
+      if(hiveExternalTable){
+        //At this point I would like to put this query into a external file facilitating changes and table configuration
+        query = s"CREATE EXTERNAL TABLE IF NOT EXISTS  ${dbname}.${tablename} (${fieldsStr} ) " +
+          s"STORED AS ORC  LOCATION '${fullDestPath}'"
+      }else
+      query = s"CREATE TABLE IF NOT EXISTS  ${dbname}.${tablename} (${fieldsStr} ) "
 
       sql(query)
     }

@@ -9,14 +9,14 @@ object MainClass extends SharedSparkSession {
   def main(args: Array[String]): Unit = {
     import sparkSession.implicits._
 
-    val dest = "hdfs://sandbox-hdp.hortonworks.com:8020/linkit/data-spark/"
-    val hdfsTmp = "hdfs://sandbox-hdp.hortonworks.com:8020/linkit/data-spark/"
+    val destHDFS = "hdfs://sandbox-hdp.hortonworks.com:8020/linkit/data-spark/"
+    val hdfsTmp = "hdfs://sandbox-hdp.hortonworks.com:8020/tmp/"
     val src = "/tmp/data-spark/"
     val dbname = "linkitdb"
 
     val hadoopHandle = new HadoopHandler()
     val hiveHandle = new HiveHandler()
-    hadoopHandle.uploadDataFilesToHiveDir(src, hdfsTmp)
+    hadoopHandle.uploadDataFilesToHiveDir(src, destHDFS)
 
     //get a list of files and create a list of DataFrames
     val fileList = hadoopHandle.getListOfCSVFiles(new File(src))
@@ -26,7 +26,7 @@ object MainClass extends SharedSparkSession {
 
     dfList.foreach( dfmap => {
       //create hive table with
-      hiveHandle.createORCTableForEachCSV(dfmap._2, dbname, dfmap._1, dest)
+      hiveHandle.createORCHiveTableForEachCSV(dfmap._2, dbname, dfmap._1, destHDFS, true)
     })
 
 
@@ -40,17 +40,17 @@ object MainClass extends SharedSparkSession {
     val timesheet = hiveHandle.getTable(dbname, "timesheet")
     timesheet.show()
 
-    val driversTime = drivers.as("dr").join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
+    val driversTime = drivers.as("dr")
+      .join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
       .select($"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
 
     driversTime.show()
 
     //The amount of logged hours and logged miles per user
-    driversTime.groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
-        .agg(sum("ts.hours_logged").as("hours_logged"), sum("ts.miles_logged").as("miles_logged")  )
+    driversTime
+      .groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+      .agg(sum("ts.hours_logged").as("hours_logged"), sum("ts.miles_logged").as("miles_logged")  )
       .show()
-
-
 
   }
 

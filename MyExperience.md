@@ -31,11 +31,11 @@ The solution of this part is quite simple and have few steps:
 <br> The Drivers and Timesheet dataframes are joind and the columns Hours_logged and Miles_logged are summed.
 
 <br> 
-```
 
     //Join DFs
-    val driversTime = drivers.as("dr").join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
-    .select($"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
+    val driversTime = drivers.as("dr")
+    .join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")
+    .select($"dr.driverId",$"dr.name", $"ts.hours_logged",$"ts.miles_logged")
     
     //The sum of hours_logged and miles_logged
      driversTime.groupBy( $"dr.driverId",$"dr.name",$"ts.hours_logged",$"ts.miles_logged")
@@ -44,3 +44,33 @@ The solution of this part is quite simple and have few steps:
 
 
  <br>
+
+## HBase
+
+This task asked me a little more effort. In Brazil I had used a library called Hbase-rdd based on Cloudera distribution 
+but I could not use it for Hortonworks Sandbox. 
+Getting started the task I decided to use Hbase-client because is a native library to connect to Hbase, 
+but the insert method and Classes doesn't support DataFrame. So, I decided to use HortonWorks Spark-Hbase Connector.     
+<br> Issues:
+<br> - I had issue the Spark version related [here](https://github.com/hortonworks-spark/shc/issues/191) when I tried to insert data to Hbase using Spark-Hbase Connector.
+<br> - Hard work to harmonizing the Libraries version with Spark/Scala and Habase version. I had to change sometimes to skip of some issues.
+
+###### Commentaries for each question:
+ - Create a table dangerous_driving on HBase
+<br> - I used the native Hbase-client here to have more control of the create table process, e.q: check if it already exist.
+
+ - load dangerous-driver.csv
+<br> - For this step I used HortonWorks Spark-Hbase Connector that supports Dataframe to read and write data. 
+Native Hbase-client can be boilerplate coding when you need to save a DF into Hbase.   
+
+- add a 4th element to the table from extra-driver.csv
+<br> - Nice exercise here! I had already decided to create a new rowkey column before save da data into Hbase composed by two columns. 
+For that first version, I choose driverId and eventTime columns to merge into a rowkey column, 
+so when I tried to add that only one line with the same eventId into Hbase I had no problem. 
+ 
+- Update id = 4 to display routeName as Los Angeles to Santa Clara instead of Santa Clara to San Diego
+<br> Sorry, no id = 4 : :( :  :+1:
+<br> If I had chose to increment the eventId to the next number (4, in that case) I would get tons issues:
+    <br>
+
+- Outputs to console the Name of the driver, the type of event and the event Time if the origin or destination is Los Angeles.

@@ -15,7 +15,7 @@ class HadoopHandler extends SharedSparkSession {
   /**
     * This method copy files from a directory to a destination into HDFS.
     * * The destination folder have the same name of the database and file
-    * * example: mydatabase/filename/filename.csv
+    * * example: mywarehouse/mydatabase/filename/filename.csv
     *
     * @param srcPath - source path
     * @param destPath - destination path
@@ -48,13 +48,15 @@ class HadoopHandler extends SharedSparkSession {
     */
   def getDataFramesMap(files: List[File]): Map[String, DataFrame] = {
     files.map(file =>
-      (removeFileExtensions(file.getName),
-        sparkSession.read
-          .option("inferSchema", "true")
-          .option("header", "true")
-          .csv("file:///" + file.getAbsolutePath))).toMap
+      (removeFileExtensions(file.getName),loadCsvAsDataFrame(file.getAbsolutePath))).toMap
   }
 
+  def loadCsvAsDataFrame(path:String) ={
+    sparkSession.read
+      .option("inferSchema", "true")
+      .option("header", "true")
+      .csv("file:///" + path)
+  }
 
   /**
     * The method return only csv files as a list from a directory.

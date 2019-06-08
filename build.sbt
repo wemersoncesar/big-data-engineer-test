@@ -6,7 +6,7 @@ version := "0.1"
 scalaVersion := "2.11.8"
 
 val hdpVersion = "2.6.4.0-91"
-val sparkVersion = "2.4.2"
+val sparkVersion = "2.2.2"
 val hadoopVersion = "2.7.3"
 val hbaseVersion = "1.1.2"
 val phoenixVersion = "4.7.0"
@@ -34,6 +34,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
   "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion,
 
+  //"org.json4s" %% "json4s-jackson" % "3.6.5",
   //log
   "log4j" % "log4j" % "1.2.17"
 
