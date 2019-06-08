@@ -10,13 +10,15 @@ object MainClass extends SharedSparkSession {
     import sparkSession.implicits._
 
     val dest = "hdfs://sandbox-hdp.hortonworks.com:8020/linkit/data-spark/"
+    val hdfsTmp = "hdfs://sandbox-hdp.hortonworks.com:8020/linkit/data-spark/"
     val src = "/tmp/data-spark/"
     val dbname = "linkitdb"
 
     val hadoopHandle = new HadoopHandler()
-    val hiveHandle= new HiveHandle()
-    hadoopHandle.uploadDataFilesToHiveDir(src, dest)
+    val hiveHandle = new HiveHandler()
+    hadoopHandle.uploadDataFilesToHiveDir(src, hdfsTmp)
 
+    //get a list of files and create a list of DataFrames
     val fileList = hadoopHandle.getListOfCSVFiles(new File(src))
     val dfList = hadoopHandle.getDataFramesMap(fileList)
 
@@ -24,7 +26,7 @@ object MainClass extends SharedSparkSession {
 
     dfList.foreach( dfmap => {
       //create hive table with
-      hiveHandle.saveDF(dfmap._2, dbname, dfmap._1, dest)
+      hiveHandle.createORCTableForEachCSV(dfmap._2, dbname, dfmap._1, dest)
     })
 
 
@@ -32,10 +34,10 @@ object MainClass extends SharedSparkSession {
     //output a dataframe on Spark that contains
     // DRIVERID, NAME, HOURS_LOGGED, MILES_LOGGED so you can have aggregated information about the driver.
 
-    val drivers = hiveHandle.getFullTable(dbname,"drivers")
+    val drivers = hiveHandle.getTable(dbname,"drivers")
     drivers.show()
 
-    val timesheet = hiveHandle.getFullTable(dbname, "timesheet")
+    val timesheet = hiveHandle.getTable(dbname, "timesheet")
     timesheet.show()
 
     val driversTime = drivers.as("dr").join(timesheet.as("ts"), $"dr.driverId" === $"ts.driverId")

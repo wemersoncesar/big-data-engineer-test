@@ -30,17 +30,11 @@ libraryDependencies ++= Seq(
   "org.apache.hbase" % "hbase-client" % hbaseVersion,
   "org.apache.hbase" % "hbase-common" % hbaseVersion,
 
+  //kafka
   "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,
   "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion,
-  /*
 
-    // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
-    "org.apache.kafka" % "kafka-clients-0-10" % sparkVersion,
-  */
-
-  //"org.apache.kafka" %% "kafka" % s"$kafkaVersion.$hdpVersion",
-  //"org.apache.kafka" % "kafka-clients" % s"$kafkaVersion",
-
+  //log
   "log4j" % "log4j" % "1.2.17"
 
 )

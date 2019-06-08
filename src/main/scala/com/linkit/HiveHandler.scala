@@ -4,25 +4,42 @@ import org.apache.spark.sql.{DataFrame, SaveMode}
 
 
 class HiveHandler extends SharedSparkSession {
+  import sparkSession.sql
 
-  def saveDF(df:DataFrame, dbname:String, tablename:String, destPath: String): Unit ={
+
+  /**
+    * This method create and ORC table for each csv file into a directory.
+    * The hive table have
+    * example: folder/dangerous_drivers.csv =>
+    *
+    * @param df - dataframe loaded from a csv file
+    * @param dbname - name of database
+    * @param tablename - table name
+    * @param destPath -
+    */
+  def createORCTableForEachCSV(df:DataFrame, dbname:String, tablename:String, destPath: String): Unit ={
 
     val formattedDf = removeHyphen(df)
     val fullDestPath = destPath.concat(dbname).concat("/").concat(tablename)
     val fieldsStr = createFieldString(formattedDf)
+
     log.info("*************************************")
     log.info(s">> ${formattedDf}")
     log.info(s">> ${fullDestPath}")
     log.info(s">> ${fieldsStr}")
     log.info("*************************************")
 
+
+
+    if(!sparkSession.catalog.tableExists(s"${dbname}.${tablename}")){
+      //creating hive table
+      val query = s"CREATE EXTERNAL TABLE IF NOT EXISTS  ${dbname}.${tablename} (${fieldsStr} ) " +
+        s"STORED AS ORC  LOCATION '${fullDestPath}'"
+
+      sql(query)
+    }
     //save to HDFS
     formattedDf.write.mode(SaveMode.Append).orc(fullDestPath)
-
-    //creating hive table
-    val query = s"CREATE EXTERNAL TABLE IF NOT EXISTS  ${dbname}.${tablename} (${fieldsStr} ) " +
-      s"STORED AS ORC  LOCATION '${fullDestPath}'"
-     sql(query)
   }
 
   /**
@@ -48,7 +65,7 @@ class HiveHandler extends SharedSparkSession {
   }
 
 
-  def getFullTable(dbName:String, tableName:String): DataFrame ={
+  def getTable(dbName:String, tableName:String): DataFrame ={
     sql(s"select * from $dbName.$tableName")
   }
 
