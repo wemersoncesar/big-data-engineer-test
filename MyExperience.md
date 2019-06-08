@@ -70,7 +70,8 @@ so when I tried to add that only one line with the same eventId into Hbase I had
  
 - Update id = 4 to display routeName as Los Angeles to Santa Clara instead of Santa Clara to San Diego
 <br> Sorry, no id = 4 : :( :  :+1:
-<br> If I had chose to increment the eventId to the next number (4, in that case) I would get tons issues:
-    <br>
+<br>There are very important concepts covered here about big data and Hbase.
+<br>    - We must not change the original data to adapt it to Hbase immutable rowkey, incrementing the eventId to 4 would lose the data traceability give us a wrong result if we try to compare with the original data.
+
 
 - Outputs to console the Name of the driver, the type of event and the event Time if the origin or destination is Los Angeles.
