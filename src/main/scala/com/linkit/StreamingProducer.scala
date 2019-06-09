@@ -3,26 +3,35 @@ package com.linkit
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming.OutputMode
 import org.apache.spark.sql.types.StructType
-object SparkStream extends SharedSparkSession {
+object StreamingProducer extends SharedSparkSession {
+
+  //should be passed as parameter or conf file
+  val linkitwarehousepath = "/linkit/data-spark/"
+  val filesPath = "data-hbase/dangerous-driver"
+  val kafka_host = "localhost"
+  val kafka_port = "9092"
+  val topic = "linkit_dangerous_driver"
 
   def main(args: Array[String]): Unit = {
-
+    //Reading data from a path.
+    //
     val csvDF = sparkSession
       .readStream
       .format("csv")
       .option("sep", ",")
       .option("header", true)
       .option("mode", "DROPMALFORMED")
-      .schema(userSchema).load("files/data-hbase/dangerous-driver")
+      .schema(userSchema).load(linkitwarehousepath+filesPath)
 
-    //possibility to have transformations here.
+    //transformations here.
     val prepareDF = csvDF.select(to_json(struct("eventId", "driverId")).alias("value") )
 
+    //writing on Kafka
     val stream = prepareDF.writeStream
       .format("kafka")
-      .option("kafka.bootstrap.servers", "192.168.99.100:9092")
-      .option("checkpointLocation", "files/data-hbase/dangerous-driver")
-      .option("topic", "test")
+      .option("kafka.bootstrap.servers", kafka_host+":"+kafka_port)
+      .option("checkpointLocation", linkitwarehousepath+"/checkpoint")
+      .option("topic", topic)
       .outputMode(OutputMode.Append())
       .start()
 
