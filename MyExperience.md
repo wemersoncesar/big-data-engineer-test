@@ -65,8 +65,8 @@ I had to change the spark version sometimes to skip of some issues.
 Native Hbase-client can be boilerplate coding when you need to save a DF into Hbase.   
 
 - add a 4th element to the table from extra-driver.csv
-<br> - Nice exercise here! I had already decided to create a new rowkey column before save da data into Hbase composed by two columns. 
-For that first version, I choose driverId and eventTime columns to merge into a rowkey column, 
+<br>    - Nice exercise here! I had already decided to create a new rowkey column composed by two columns before save the data into Hbase. 
+For that first version, I choose driverId and eventId columns to merge into a rowkey column, 
 so when I tried to add that only one line with the same eventId into Hbase I had no problem. 
  
 - Update id = 4 to display routeName as Los Angeles to Santa Clara instead of Santa Clara to San Diego
