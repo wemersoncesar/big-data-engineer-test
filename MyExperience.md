@@ -85,7 +85,7 @@ so when I tried to add that only one line with the same eventId into Hbase I had
 <br> Structured streaming is a modern streaming tool that was released in Spark 2.x version in the end of 2017, 
 but It becames a production realease only in Spark 2.2.x which was removed the experimental code. 
 There are some distinctions between Spark Streaming and Structured Streaming, the main one is that Structure Streaming 
-has no micro batch concept and is more close to the realtime processing.
+has no micro batch concept and is more closer to the realtime processing.
 Another advantages is different modes of data processing we can use (Complete, Append and Update mode) and Structure Streaming 
 uses DataFrame internaly, there are tons of sites and blogs comparations that say DataFrame is more optimized than RDD.
 
