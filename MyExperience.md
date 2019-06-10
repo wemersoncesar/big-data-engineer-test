@@ -7,7 +7,7 @@ I usually to have all service installed on my machine, standalone (integrated wi
 avoiding to use any Big Data distributions just to save RAM memory, but for this test 
 I decided using the HortonWorks Sandbox due to my familiarity with that and I didn't have Hive installed.  
 
-- First issue was found on HDP 3.x sandbox. For that does not make me waste time, I changed that to HDP 2.6.5
+- First issue was found on HDP 3.x sandbox. It could make me waste time, so I changed that to HDP 2.6.5 which I already have a image installed on my Virtualbox.  
 - Fist job running: There wasn't resource allocated to default queue on capacity scheduler, so I changed that to 50% / 100% and got able to run the job.
 - Few memory and resource on my machine (Macbook pro i7 16GB) was a problem too, so I had to kill some yarn (yarn application -kill app...) 
 process to get free resources, since I could not reserving more RAM to VirtualBox.
@@ -72,3 +72,22 @@ so when I tried to add that only one line with the same eventId into Hbase I had
 <br>    - We must not change the original data to adapt it to Hbase, incrementing the eventId to 4 would lose the data traceability give us a wrong result if we try to compare with the original data. So, to get that fourth row I used the dirverId and eventId concatenated. 
 
 - Outputs to console the Name of the driver, the type of event and the event Time if the origin or destination is Los Angeles.
+<br> Just a simple select on DataFrame, but important change the values to the same uppercase or lowwecase.
+<br>
+``` 
+ .select("driverName", "eventType", "eventTime", "eventTime")
+      .where(lower(col("routeName")).contains("Los Angeles".toLowerCase))
+```
+
+## Spark Structured Streaming
+
+<br> Structured streaming is a modern streaming tool that was released in Spark 2.x version in the end of 2017, 
+but It becames a production realease only in Spark 2.2.x which was removed the experimental code. 
+There are some distinctions between Spark Streaming and Structured Streaming, the main one is that Structure Streaming 
+has no micro batch concept and is more close to the realtime processing.
+Another advantages is different modes of data processing we can use (Complete, Append and Update mode) and Structure Streaming 
+uses DataFrame internaly, there are tons of sites and blogs comparations that say DataFrame is more optimized than RDD.
+
+
+
+

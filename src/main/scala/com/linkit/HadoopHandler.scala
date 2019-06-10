@@ -65,7 +65,6 @@ class HadoopHandler extends SharedSparkSession {
     * @return List[File]
     */
   def getListOfCSVFiles(dir: File): List[File] = {
-
     if (dir.exists()) dir.listFiles.filter(_.isFile).filter(_.getName.endsWith(".csv")).toList
     else List[File]()
   }

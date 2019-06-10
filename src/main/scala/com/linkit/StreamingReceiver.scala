@@ -24,7 +24,8 @@ object StreamingReceiver extends SharedSparkSession {
     val write = read.writeStream
       //could be csv, parquet, ORC
         .format("json")
-      //
+      //Append Mode - Only the new rows appended in the Result Table since the last trigger will be written to the external storage.
+      // This is applicable only on the queries where existing rows in the Result Table are not expected to change.
         .outputMode("append")
         .option("failOnDataLoss", "false")
         .option("path", linkitWarehousePath+pathDest)
