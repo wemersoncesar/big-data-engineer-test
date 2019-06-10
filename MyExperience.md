@@ -18,15 +18,14 @@ process to get free resources, since I could not reserving more RAM to VirtualBo
 This part of assessment was interesting and really near from real problems that we can face daily. 
 <br>
 The solution of this part is quite simple and have few steps:   
-<br>    1) Upload the file directory to HDFS located in /tmp
-<br>    2) List files into directory and create a Map of DataFrames
+<br>    1) The method `uploadDataFilesToHiveDir` gets the local files and put to HDFS located in /linkit/data-spark and add the file names as a path e.g. /linkit/data-spark/drivers/drivers.csv
+<br>    2) List files into directory and create a Map of DataFrames.
 <br>    3) Rename columns to replace dash sign (-) to underscore (_) 
         symbol (** Hive doesn't support dash in column name). 
  <br>   4) After the DF is prepared, the method `createORCTableForEachCSV` will create a External Table (if not exist) 
  and save the files as ORC into the destination path
  
- After the tables are already created,  the method getTable will return the DataFrame 
- required by parameter, in this case, drivers and timesheet.
+ After the tables are already created, the method `getTable` will return the Hive table as DataFrame, in this case, drivers and timesheet (separately).
    
 <br> The Drivers and Timesheet dataframes are joind and the columns Hours_logged and Miles_logged are summed.
 
@@ -69,9 +68,7 @@ For that first version, I choose driverId and eventTime columns to merge into a 
 so when I tried to add that only one line with the same eventId into Hbase I had no problem. 
  
 - Update id = 4 to display routeName as Los Angeles to Santa Clara instead of Santa Clara to San Diego
-<br> Sorry, no id = 4 : :( :  :+1:
-<br>There are very important concepts covered here about big data and Hbase.
-<br>    - We must not change the original data to adapt it to Hbase immutable rowkey, incrementing the eventId to 4 would lose the data traceability give us a wrong result if we try to compare with the original data.
-
+<br>There are very important concepts covered about Hbase and Big Data in general here. 
+<br>    - We must not change the original data to adapt it to Hbase, incrementing the eventId to 4 would lose the data traceability give us a wrong result if we try to compare with the original data. So, to get that fourth row I used the dirverId and eventId concatenated. 
 
 - Outputs to console the Name of the driver, the type of event and the event Time if the origin or destination is Los Angeles.
