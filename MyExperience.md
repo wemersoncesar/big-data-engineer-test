@@ -75,7 +75,6 @@ so when I tried to add that only one line with the same eventId into Hbase I had
 
 - Outputs to console the Name of the driver, the type of event and the event Time if the origin or destination is Los Angeles.
 <br> Just a simple select on DataFrame, but important change the values to the same uppercase or lowwecase.
-<br>
 ``` 
  .select("driverName", "eventType", "eventTime", "eventTime")
       .where(lower(col("routeName")).contains("Los Angeles".toLowerCase))
