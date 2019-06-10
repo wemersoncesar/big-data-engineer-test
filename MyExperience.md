@@ -17,7 +17,7 @@ process to get free resources, since I could not reserving more RAM to VirtualBo
 
 This part of assessment was interesting and really near from real problems that we can face daily. 
 <br>
-The solution of this part is quite simple and have few steps:   
+The solution of this part is quite simple and it starts by running the class MainClass and it will:   
 <br>    1) The method `uploadDataFilesToHiveDir` gets the local files and put to HDFS located in /linkit/data-spark and add the file names as a path e.g. /linkit/data-spark/drivers/drivers.csv
 <br>    2) List files into directory and create a Map of DataFrames.
 <br>    3) Rename columns to replace dash sign (-) to underscore (_) 
@@ -52,10 +52,12 @@ Getting started the task I decided to use Hbase-client because is a native libra
 but the insert method and Classes doesn't support DataFrame. So, I decided to use HortonWorks Spark-Hbase Connector.     
 <br> Issues:
 <br> - I had issue the Spark version related [here](https://github.com/hortonworks-spark/shc/issues/191) when I tried to insert data to Hbase using Spark-Hbase Connector.
-<br> - Hard work to harmonizing the Libraries version with Spark/Scala and Habase version. I had to change sometimes to skip of some issues.
+<br> - Hard work to harmonizing the Libraries version with Spark/Scala and Habase version. 
+I had to change the spark version sometimes to skip of some issues.
 
 ###### Commentaries for each question:
- - Create a table dangerous_driving on HBase
+<br>
+ - Create a table dangerous_driving on HBase 
 <br> - I used the native Hbase-client here to have more control of the create table process, e.q: check if it already exist.
 
  - load dangerous-driver.csv
